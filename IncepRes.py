@@ -1,51 +1,26 @@
-# Modules 
-# import openai
+# Modules
 import streamlit as st
-import logging
 import numpy as np
 from PIL import Image, ImageEnhance
 import time
 import json
-import requests
 import base64
-# from openai import OpenAI, OpenAIError
-
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 
 # Constants
 NUMBER_OF_MESSAGES_TO_DISPLAY = 20
 API_DOCS_URL = "https://docs.streamlit.io/library/api-reference"
 
-# Retrieve and validate API key
-# OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", None)
-# if not OPENAI_API_KEY:
-#     st.error("Please add your OpenAI API key to the Streamlit secrets.toml file.")
-#     st.stop()
-
-# Assign OpenAI API Key
-# openai.api_key = OPENAI_API_KEY
-# client = openai.OpenAI()
-
-# Streamlit Page Configuration
 st.set_page_config(
     page_title="IncepRes",
     page_icon="imgs/IncepRes_Favicon.png",
     layout="wide",
     initial_sidebar_state="auto",
     menu_items={
-        "Get help": "https://github.com/AdieLaine/Streamly",
+        "Get help": "https://github.com/mainak-das/IncepRes",
         "About": """
             ## Upload a report to classify cancer with precision
             ### Powered using GPT-4o-mini
-
-            **GitHub**: https://github.com/mainak-das
-
-            The AI Assistant named, Streamly, aims to provide the latest updates from Streamlit,
-            generate code snippets for Streamlit widgets,
-            and answer questions about Streamlit's latest features, issues, and more.
-            Streamly has been trained on the latest Streamlit updates and documentation.
+            **GitHub**: https://github.com/mainak-das/IncepRes
         """
     }
 )
@@ -79,16 +54,9 @@ with col1:
             font-family: "Poppins", sans-serif;
             font-weight: 1000;
             color: #212529;
-            margin-top: 10px;
             line-height: 1.3;
-
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        /* Additional styling for another line */
-        .line2 {
-            margin-top: 10px;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -112,7 +80,7 @@ with col1:
     </style>
     """, unsafe_allow_html=True)
 
-    # CSS for highlighting text bg
+    # CSS for highlighting text BG
     highlight_css = """
     <style>
     .container {
@@ -162,11 +130,9 @@ with col1:
     }
     </style>
     """
-
-    # Apply the CSS
     st.markdown(highlight_css, unsafe_allow_html=True)
 
-    # Sub-heading with the highlighted "IncepRes" text
+    # CSS for the Tagline
     st.markdown(
     '''
     <style>
@@ -184,7 +150,7 @@ with col1:
     unsafe_allow_html=True
 )
 
-# ------------------ Image Uploader ------------------ #
+# ------------------ CSS for Image Uploader ------------------ #
 st.markdown(
     """ 
     <style>
@@ -193,13 +159,14 @@ st.markdown(
     }
 
     .stFileUploader > section {
+        font-size: 22px;
         font-family: "Poppins", sans-serif;    
-        margin-top: 35px !important;
+        margin-top: 0px !important;
         height: 200px;
-        padding: 10px 35px;
+        padding: 10px 40px;
         position: relative;
         border-radius: 20px;
-        border: 6px solid transparent;
+        border: 4px solid transparent;
         background:
             linear-gradient(#262730, #262730) padding-box,
             repeating-linear-gradient(
@@ -217,8 +184,28 @@ st.markdown(
         align-items: center;
         font-size: 20px !important; 
         padding-left: 7px;
-        font-family: "Poppins", sans-serif;    
+        font-family: "Poppins", sans-serif;   
+        border: .1px solid #20b8cd;
     }
+
+    span.st-emotion-cache-9ycgxx.e1blfcsg3 {
+        visibility: hidden;
+        position: relative;
+    }
+
+    span.st-emotion-cache-9ycgxx.e1blfcsg3::after {
+        width: 1000px;
+        content: "Drag & Drop Cancer Report Here";
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #20b8cd;
+        font-size: 23px;
+        font-weight: 360;
+        font-family: "Poppins", sans-serif;
+    }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -226,13 +213,14 @@ st.markdown(
 
 img_file_buffer = st.file_uploader(
     '',
-    type=['png', 'jpg'],
+    type=['pdf', 'png', 'jpg'],
     accept_multiple_files=False
 )
 
 if img_file_buffer is not None:
     image = Image.open(img_file_buffer)
     img_array = np.array(image)
+# ----------------------- End of CSS for Image Uploader ----------------------- #
 
 # ----------------------------- SELECT BOX & SUBMIT BUTTON -------------------------------- #
 col1, col2 = st.columns([5, 1])
@@ -247,8 +235,7 @@ with col1:
     )
 
 with col2:
-    classify_button = st.button("Classify", key="classify_btn")
-
+    classify_button = st.button("Classify ➤", key="submit_btn")
 if classify_button:
     if output_type == "Select Output Type..." and ('img_file_buffer' not in locals() or img_file_buffer is None):
         st.warning("⚠  Please upload an image and select an output parameter!")
@@ -263,7 +250,6 @@ if classify_button:
 
 st.markdown("""
     <style>
-        /* Styling Select Box Placeholder */
         div[data-baseweb="select"] span[title="Select Output Type..."] {
             color: gray !important;
             font-family: "Poppins", sans-serif;
@@ -316,40 +302,20 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
+# ------------------- End of Selector & Button ------------------- #
 
-# ------------------ End of Selector & Button ------------------ #
-
-# ------------------ Helper Functions ------------------ #
+# ----------------------- Helper Functions ----------------------- #
 def img_to_base64(image_path):
     """Convert image to base64."""
     try:
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     except Exception as e:
-        logging.error(f"Error converting image to base64: {str(e)}")
+        # logging.error(f"Error converting image to base64: {str(e)}")
         return None
+# -------------------- End of Helper Functions -------------------- #
 
-def initialize_session_state():
-    """Initialize session state variables."""
-    if "history" not in st.session_state:
-        st.session_state.history = []
-    if 'conversation_history' not in st.session_state:
-        st.session_state.conversation_history = []
-
-def main():
-    """
-    Display Streamlit updates and handle the chat interface.
-    """
-    initialize_session_state()
-
-    if not st.session_state.history:
-        initial_bot_message = "Hello! How can I assist you with Streamlit today?"
-        st.session_state.history.append({"role": "assistant", "content": initial_bot_message})
-        # st.session_state.conversation_history = initialize_conversation()
-
-# ------------------ End of Helper Functions ------------------ #
-
-# ------------------ Side Bar ------------------ #
+# ---------------------------- Side Bar ---------------------------- #
 st.markdown(
     """
     <style>
@@ -446,8 +412,4 @@ st.sidebar.markdown(
 st.sidebar.markdown("---")
 
 st.sidebar.header("FAQ's")
-
 # ------------------ End of Side Bar ------------------ #
-
-if __name__ == "__main__":
-    main()
