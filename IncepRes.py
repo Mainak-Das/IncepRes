@@ -366,9 +366,11 @@ st.sidebar.markdown("Cancer detection remains a critical challenge, with traditi
 st.sidebar.markdown("---")
 
 st.sidebar.header("Developers")
+# Developer Names
+people_icon_url = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
+linkedin_icon_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
+github_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733609.png"
 
-# Person Icons & Developer Names
-icon_url = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
 st.sidebar.markdown(
     f"""
     <style>
@@ -376,34 +378,117 @@ st.sidebar.markdown(
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            position: relative;
         }}
-        .sidebar-container img {{
-            width: 18px;
-            height: 20px;
-            margin-right: 8px;
-            padding-bottom: 1px;
+
+        .sidebar-container img.person-icon {{
+            width: 16px;
+            height: 18px;
+            margin-right: 6px;
             filter: invert(1);
         }}
-        .sidebar-container span {{
+
+        .tooltip {{
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }}
+
+        .tooltip span {{
+            font-size: 20px;
+            font-weight: 500;
+        }}
+
+        .tooltip .tooltiptext {{
+            width: 70px;
+            visibility: hidden;
+            background-color: #20b8cd;
             color: white;
-            font-size: 18px;
+            text-align: center;
+            padding: 6px 10px;
+            border-radius: 7px;
+            position: absolute;
+            left: 105%;
+            top: -3px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }}
+
+        .tooltip:hover .tooltiptext {{
+            visibility: visible;
+            opacity: 1;
+        }}
+
+        .tooltiptext img {{
+            height: 19px;
+            width: auto;
+            filter: invert(1) brightness(1000%);
         }}
     </style>
+
     <div class="sidebar-container">
-        <img src="{icon_url}" alt="Person Icon">
-        <span>Swastik Karmakar</span>
+        <img src="{people_icon_url}" class="person-icon" alt="Person Icon">
+        <div class="tooltip">
+            <span>Swastik Karmakar</span>
+            <div class="tooltiptext">
+                <a href="https://www.linkedin.com/in/swastik-karmakar-541bb7252/" target="_blank">
+                    <img src="{linkedin_icon_url}" alt="LinkedIn">
+                </a>
+                <a href="https://www.linkedin.com/in/swastik-karmakar-541bb7252/" target="_blank">
+                    <img src="{github_icon_url}" alt="GitHub">
+                </a>
+            </div>
+        </div>
     </div>
+
     <div class="sidebar-container">
-        <img src="{icon_url}" alt="Person Icon">
-        <span>Mainak Das</span>
+        <img src="{people_icon_url}" class="person-icon" alt="Person Icon">
+        <div class="tooltip">
+            <span>Mainak Das</span>
+            <div class="tooltiptext">
+                <a href="https://www.linkedin.com/in/mainakdas2001/" target="_blank">
+                    <img src="{linkedin_icon_url}" alt="LinkedIn">
+                </a>
+                <a href="https://github.com/mainak-das" target="_blank">
+                    <img src="{github_icon_url}" alt="GitHub">
+                </a>
+            </div>
+        </div>
     </div>
+
     <div class="sidebar-container">
-        <img src="{icon_url}" alt="Person Icon">
-        <span>Aishik Maitra</span>
+        <img src="{people_icon_url}" class="person-icon" alt="Person Icon">
+        <div class="tooltip">
+            <span>Aishik Maitra</span>
+            <div class="tooltiptext">
+                <a href="https://www.linkedin.com/in/aishik-maitra-4199b5250/" target="_blank">
+                    <img src="{linkedin_icon_url}" alt="LinkedIn">
+                </a>
+                <a href="https://github.com/aishik-maitra" target="_blank">
+                    <img src="{github_icon_url}" alt="GitHub">
+                </a>
+            </div>
+        </div>
     </div>
+
     <div class="sidebar-container">
-        <img src="{icon_url}" alt="Person Icon">
-        <span>Ayush Das</span>
+        <img src="{people_icon_url}" class="person-icon" alt="Person Icon">
+        <div class="tooltip">
+            <span>Ayush Das</span>
+            <div class="tooltiptext">
+                <a href="https://www.linkedin.com/in/ayush-das-499a12247/" target="_blank">
+                    <img src="{linkedin_icon_url}" alt="LinkedIn">
+                </a>
+                <a href="https://github.com/ayush-das" target="_blank">
+                    <img src="{github_icon_url}" alt="GitHub">
+                </a>
+            </div>
+        </div>
     </div>
     """,
     unsafe_allow_html=True
