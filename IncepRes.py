@@ -50,7 +50,7 @@ with col1:
         .full-width {
             width: 100%;
             text-align: center;
-            font-size: 58px;
+            font-size: 50px;
             font-family: "Poppins", sans-serif;
             font-weight: 1000;
             color: #212529;
