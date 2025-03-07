@@ -2,7 +2,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image, ImageEnhance
-import fitz  # PyMuPDF for PDF processing
+import fitz
 import io
 import time
 import json
@@ -217,11 +217,9 @@ if input_file is not None:
 
     if file_type in ["image/png", "image/jpeg"]:
         image = Image.open(input_file)
-        st.success("Image uploaded successfully.")
 
     elif file_type == "application/pdf":
         pdf_document = fitz.open(stream=input_file.read(), filetype="pdf")
-        st.success(f"PDF uploaded successfully.")
 
     else:
         st.error("Unsupported file format!")
@@ -309,6 +307,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 # ------------------- End of Selector & Button ------------------- #
 
+
 # ----------------------- Helper Functions ----------------------- #
 def img_to_base64(image_path):
     """Convert image to base64."""
@@ -316,7 +315,6 @@ def img_to_base64(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     except Exception as e:
-        # logging.error(f"Error converting image to base64: {str(e)}")
         return None
 # -------------------- End of Helper Functions -------------------- #
 
