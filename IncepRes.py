@@ -2,13 +2,11 @@
 import streamlit as st
 import numpy as np
 from PIL import Image, ImageEnhance
+import fitz  # PyMuPDF for PDF processing
+import io
 import time
 import json
 import base64
-
-# Constants
-NUMBER_OF_MESSAGES_TO_DISPLAY = 20
-API_DOCS_URL = "https://docs.streamlit.io/library/api-reference"
 
 st.set_page_config(
     page_title="IncepRes",
@@ -19,7 +17,6 @@ st.set_page_config(
         "Get help": "https://github.com/mainak-das/IncepRes",
         "About": """
             ## Upload a report to classify cancer with precision
-            ### Powered using GPT-4o-mini
             **GitHub**: https://github.com/mainak-das/IncepRes
         """
     }
@@ -132,7 +129,7 @@ with col1:
     """
     st.markdown(highlight_css, unsafe_allow_html=True)
 
-    # CSS for the Tagline
+    # CSS for the Tagline (IncepRes Where Speed Meets Precision in Cancer Detection)
     st.markdown(
     '''
     <style>
@@ -150,7 +147,7 @@ with col1:
     unsafe_allow_html=True
 )
 
-# ------------------ CSS for Image Uploader ------------------ #
+# ------------------ CSS for File Uploader ------------------ #
 st.markdown(
     """ 
     <style>
@@ -162,7 +159,7 @@ st.markdown(
         font-size: 22px;
         font-family: "Poppins", sans-serif;    
         margin-top: 0px !important;
-        height: 200px;
+        height: 140px;
         padding: 10px 40px;
         position: relative;
         border-radius: 20px;
@@ -210,17 +207,25 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+# ------------------ END of CSS for File Uploader ------------------ #
 
-img_file_buffer = st.file_uploader(
-    '',
-    type=['pdf', 'png', 'jpg'],
-    accept_multiple_files=False
-)
+# ------------------ File Uploader ------------------ #
+input_file = st.file_uploader("", type=["png", "jpg", "jpeg", "pdf"])
 
-if img_file_buffer is not None:
-    image = Image.open(img_file_buffer)
-    img_array = np.array(image)
-# ----------------------- End of CSS for Image Uploader ----------------------- #
+if input_file is not None:
+    file_type = input_file.type
+
+    if file_type in ["image/png", "image/jpeg"]:
+        image = Image.open(input_file)
+        st.success("Image uploaded successfully.")
+
+    elif file_type == "application/pdf":
+        pdf_document = fitz.open(stream=input_file.read(), filetype="pdf")
+        st.success(f"PDF uploaded successfully.")
+
+    else:
+        st.error("Unsupported file format!")
+# ------------------ End of File Uploader ------------------ #
 
 # ----------------------------- SELECT BOX & SUBMIT BUTTON -------------------------------- #
 col1, col2 = st.columns([5, 1])
@@ -237,11 +242,11 @@ with col1:
 with col2:
     classify_button = st.button("Classify ➤", key="submit_btn")
 if classify_button:
-    if output_type == "Select Output Type..." and ('img_file_buffer' not in locals() or img_file_buffer is None):
+    if output_type == "Select Output Type..." and ('input_file' not in locals() or input_file is None):
         st.warning("⚠  Please upload an image and select an output parameter!")
     elif output_type == "Select Output Type...":
         st.warning("⚠  Please select an output parameter!")
-    elif 'img_file_buffer' not in locals() or img_file_buffer is None:
+    elif 'input_file' not in locals() or input_file is None:
         st.warning("⚠  Please upload an image!")
     else:
         with st.spinner('Analysing... Please wait'):
