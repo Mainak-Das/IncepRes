@@ -3,3 +3,4 @@ requests
 Image
 pillow
 pymupdf
+matplotlib
