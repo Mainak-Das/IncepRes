@@ -7,6 +7,10 @@ import io
 import time
 import json
 import base64
+# import tensorflow as tf
+# from tensorflow import keras
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="IncepRes",
@@ -22,6 +26,12 @@ st.set_page_config(
     }
 )
 
+# CDN's for Icons
+people_icon_url = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
+linkedin_icon_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
+github_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733609.png"
+
+# ------------------ Main Content Started Here ------------------ #
 col1 = st.container()
 with col1:
     st.markdown("""
@@ -202,7 +212,6 @@ st.markdown(
         font-weight: 360;
         font-family: "Poppins", sans-serif;
     }
-
     </style>
     """,
     unsafe_allow_html=True,
@@ -210,20 +219,74 @@ st.markdown(
 # ------------------ END of CSS for File Uploader ------------------ #
 
 # ------------------ File Uploader ------------------ #
+hide_file_name_and_remove_button = """
+    <style>
+        div.stFileUploaderFile.st-emotion-cache-12xsiil.e1blfcsg10 {
+            display: flex !important;
+            align-items: center; 
+        }
+        
+        /* Style for the remove button (X) */
+        div.stFileUploaderFile.st-emotion-cache-12xsiil.e1blfcsg10 button {
+            margin-left: 10px;
+        }
+
+        .success_toast {
+            position: fixed;
+            top: 9%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-image: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(139, 195, 74, 0.8));
+            color: #0e1117;
+            padding: 12px 10px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            font-family: "Poppins", sans-serif;
+            text-align: center;
+            z-index: 1000;
+            opacity: 0.5;
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+"""
+st.markdown(hide_file_name_and_remove_button, unsafe_allow_html=True)
+
+# Function to display custom toast message
+def show_success_toast(message):
+    st.markdown(f'<div class="success_toast">{message}</div>', unsafe_allow_html=True)
+
+# Initialize session state for uploaded file name if it doesn't exist
+if 'uploaded_file' not in st.session_state:
+    st.session_state['uploaded_file'] = None
+
+# File uploader widget
 input_file = st.file_uploader("", type=["png", "jpg", "jpeg", "pdf"])
 
+# Check if a file is already uploaded
 if input_file is not None:
     file_type = input_file.type
+    file_name = input_file.name
 
-    if file_type in ["image/png", "image/jpeg"]:
-        image = Image.open(input_file)
+    if st.session_state['uploaded_file'] is None:
+        st.session_state['uploaded_file'] = file_name
+        if file_type in ["image/png", "image/jpeg"]:
+            show_success_toast(f"Report uploaded successfully...")
+        elif file_type == "application/pdf":
+            pdf_document = fitz.open(stream=input_file.read(), filetype="pdf")
+            show_success_toast(f"PDF uploaded successfully...")
+        else:
+            st.error("Unsupported file format!")
 
-    elif file_type == "application/pdf":
-        pdf_document = fitz.open(stream=input_file.read(), filetype="pdf")
-
-    else:
-        st.error("Unsupported file format!")
-# ------------------ End of File Uploader ------------------ #
+if input_file is None and st.session_state['uploaded_file'] is not None:
+    st.session_state['uploaded_file'] = None
 
 # ----------------------------- SELECT BOX & SUBMIT BUTTON -------------------------------- #
 col1, col2 = st.columns([5, 1])
@@ -249,10 +312,22 @@ if classify_button:
     else:
         with st.spinner('Analysing... Please wait'):
             time.sleep(3)
-        st.write("✅ Button Clicked!")
-
+        
+        col1, col2 = st.columns([1, 1]) 
+        with col1:
+            st.subheader("Input Image")
+        with col2:
+            st.subheader("Output Image") 
+        col1.image(input_file, use_container_width=True)
+        col2.image(input_file, use_container_width=True)
+            
 st.markdown("""
     <style>
+        div.stHorizontalBlock.st-emotion-cache-ocqkz7.e6rk8up0 {
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+            
         div[data-baseweb="select"] span[title="Select Output Type..."] {
             color: gray !important;
             font-family: "Poppins", sans-serif;
@@ -303,10 +378,10 @@ st.markdown("""
             font-weight: 700;
             color: #0e1117 !important;
         }
+
     </style>
     """, unsafe_allow_html=True)
 # ------------------- End of Selector & Button ------------------- #
-
 
 # ----------------------- Helper Functions ----------------------- #
 def img_to_base64(image_path):
@@ -369,11 +444,6 @@ st.sidebar.markdown("Cancer detection remains a critical challenge, with traditi
 st.sidebar.markdown("---")
 
 st.sidebar.header("Developers")
-# Developer Names
-people_icon_url = "https://cdn-icons-png.flaticon.com/512/456/456212.png"
-linkedin_icon_url = "https://cdn-icons-png.flaticon.com/512/174/174857.png"
-github_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733609.png"
-
 st.sidebar.markdown(
     f"""
     <style>
@@ -498,6 +568,5 @@ st.sidebar.markdown(
 )
 
 st.sidebar.markdown("---")
-
-st.sidebar.header("FAQ's")
+# st.sidebar.header("FAQ's")
 # ------------------ End of Side Bar ------------------ #
