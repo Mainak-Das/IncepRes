@@ -1,6 +1,11 @@
-streamlit
-requests
-Image
-pillow
-pymupdf
-matplotlib
+streamlit==1.22.0
+Pillow==10.3.0
+PyMuPDF==1.25.4
+tensorflow==2.10.1
+tensorflow-addons==0.22.0
+matplotlib==3.9.0
+opencv-python-headless==4.10.0.84
+lime==0.2.0.1
+scikit-image==0.25.1
+IPython==8.25.0
+numpy==1.26.4

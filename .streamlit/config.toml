@@ -4,3 +4,14 @@ primaryColor="#20b8cd"
 
 [server]
 maxUploadSize = 500
+enableCORS = false
+enableXsrfProtection = false
+
+[global]
+showWarningOnDirectExecution = false
+
+[browser]
+gatherUsageStats = false
+
+[client]
+showFooter = false
